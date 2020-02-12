@@ -86,6 +86,8 @@ if (!defined('PHP_VERSION_ID')) {
     define('PHP_VERSION_ID', ($version[0] * 10000 + $version[1] * 100 + $version[2]));
 }
 
+require('fpdf.php');
+
 class mPDF
 {
 
@@ -810,7 +812,7 @@ var $innerblocktags;
 // **********************************
 // **********************************
 
-public function __construct($mode='',$format='A4',$default_font_size=0,$default_font='',$mgl=15,$mgr=15,$mgt=16,$mgb=16,$mgh=9,$mgf=9, $orientation='P') {
+function mPDF($mode='',$format='A4',$default_font_size=0,$default_font='',$mgl=15,$mgr=15,$mgt=16,$mgb=16,$mgh=9,$mgf=9, $orientation='P') {
 
 /*-- BACKGROUNDS --*/
 		if (!class_exists('grad', false)) { include(_MPDF_PATH.'classes/grad.php'); }
@@ -3854,7 +3856,7 @@ function Text($x,$y,$txt,$OTLdata=array(), $textvar=0, $aixextra='',$coordsys=''
 		if($this->FillColor!=$c) { $s.= ' '.$this->FillColor.' '; }
 	}
 	$s .= 'Q';
-
+	
 	if ($return) { return $s." \n"; }
 	$this->_out($s);
 }
@@ -4617,6 +4619,7 @@ function Cell($w,$h=0,$txt='',$border=0,$ln=0,$align='',$fill=0,$link='', $curre
 			$this->Link($this->x,$boxtop,$w,$boxheight,$link);
 		}
 	}
+/*	echo $s.'<br />'; */
 	if($s) $this->_out($s);
 
 	// WORD SPACING
@@ -10972,7 +10975,7 @@ function _getImage(&$file, $firsttime=true, $allowvector=true, $orig_srcpath=fal
 				imagealphablending($im, false);
 				imagesavealpha($im, false); 
 				imageinterlace($im, false);
-				if (!is_writable(_MPDF_TEMP_PATH)) {
+				if (!is_writable($tempfile)) { 
 					ob_start(); 
 					$check = @imagepng($im);
 					if (!$check) { return $this->_imageError($file, $firsttime, 'Error creating temporary image object whilst using GD library to parse GIF image'); }
@@ -11531,6 +11534,7 @@ function _putstream($s) {
 function _out($s,$ln=true) {
 	if($this->state==2) {
 	   if ($this->bufferoutput) {
+
 		$this->headerbuffer.= $s."\n";
 	   }
 /*-- COLUMNS --*/
@@ -11558,7 +11562,7 @@ function _out($s,$ln=true) {
 		if ($h < 0) { $h = -$h; }
 		$this->columnbuffer[] = array(
 		's' => $s,							// Text string to output 
-		'col' => $this->CurrCol, 				// Column when printed 
+		'col' => $this->CurrCol, 		    // Column when printed 
 		'x' => $this->x, 						// x when printed 
 		'y' => $this->y,					 	// this->y when printed (after column break) 
 		'h' => $h						 	// actual y at bottom when printed = y+h  
@@ -32741,8 +32745,52 @@ function SetJS($script) {
 	$this->js = $script;
 }
 
+	
+	
+	function RotatedText($x,$y,$txt,$angle)
+	{
+		//Text rotated around its origin
+		$this->Rotate($angle,$x,$y);
+		$this->Text($x,$y,$txt);  
+		$this->Rotate(0);
+	}
+	
+	// function TextWithDirection($x, $y, $txt, $direction='R'){
+		
+		// if ($direction=='R'){
+			
+			// $s=sprintf('BT %.3F %.3F %.3F %.3F %.3F %.3F Tm (%s) Tj ET',1,0,0,1,$x*_MPDFK,($this->h-$y)*_MPDFK,$this->_escape($txt));
+			
+		// }elseif ($direction=='L'){
+			// $s=sprintf('BT %.3F %.3F %.3F %.3F %.3F %.3F Tm (%s) Tj ET',-1,0,0,-1,$x*_MPDFK,($this->h-$y)*_MPDFK,$this->_escape($txt));
+		// }elseif ($direction=='U'){
+			// $s=sprintf('BT %.3F %.3F %.3F %.3F %.3F %.3F Tm (%s) Tj ET',0,1,-1,0,$x*_MPDFK,($this->h-$y)*_MPDFK,$this->_escape($txt));
+		// }elseif ($direction=='D'){
+			// $s=sprintf('BT %.3F %.3F %.3F %.3F %.3F %.3F Tm (%s) Tj ET',0,-1,1,0,$x*_MPDFK,($this->h-$y)*_MPDFK,$this->_escape($txt));
+		// }else{
+			// $s=sprintf('BT %.3F %.3F Td (%s) Tj ET',$x*_MPDFK,($this->h-$y)*_MPDFK,$this->_escape($txt));
+		// }
+		// if ($this->ColorFlag){
+			// $s='q '.$this->TextColor.' '.$s.' Q';
+		// }
+		
+		// $this->_out($s);
+	// }
+	// function TextWithRotation($x, $y, $txt, $txt_angle, $font_angle=0){
+		// $font_angle+=90+$txt_angle;
+		// $txt_angle*=M_PI/180;
+		// $font_angle*=M_PI/180;
+		// $txt_dx=cos($txt_angle);
+		// $txt_dy=sin($txt_angle);
+		// $font_dx=cos($font_angle);
+		// $font_dy=sin($font_angle);
 
-
+		// $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',$txt_dx,$txt_dy,$font_dx,$font_dy,$x*_MPDFK,($this->h-$y)*_MPDFK,$this->_escape($txt));
+		// if ($this->ColorFlag){
+			// $s='q '.$this->TextColor.' '.$s.' Q';
+		// }
+		// $this->_out($s);
+	// }
 
 }//end of Class
 

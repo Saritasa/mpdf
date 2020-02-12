@@ -10,7 +10,7 @@ var $CSS;
 var $tbCSSlvl;
 
 
-function __construct(&$mpdf) {
+function cssmgr(&$mpdf) {
 	$this->mpdf = $mpdf;
 	$this->tablecascadeCSS = array();
 	$this->CSS=array();
@@ -1130,8 +1130,6 @@ function MergeCSS($inherit,$tag,$attr) {
 	$zp = array(); 
 
 	$classes = array();
-	$attr = $attr === '' ? [] : $attr;
-	
 	if (isset($attr['CLASS'])) {
 		$classes = preg_split('/\s+/',$attr['CLASS']);
 	}

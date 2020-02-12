@@ -43,7 +43,7 @@ var $LuDataCache;
 
 var $debugOTL = false;
 
-function __construct(&$mpdf) {
+function otl(&$mpdf) {
 	$this->mpdf = $mpdf;
 
 	$this->arabic_initialise();
